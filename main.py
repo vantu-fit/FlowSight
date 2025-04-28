@@ -68,4 +68,4 @@ def main(include_data=True, include_metadata=True):
     print("\nProcess completed!")
 
 if __name__ == "__main__":
-    main(include_data=True, include_metadata=True)
+    main(include_data=False, include_metadata=True)

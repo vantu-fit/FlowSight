@@ -5,3 +5,7 @@ venv/
 env/
 .idea/
 .vscode/
+data/*
+.terraform/
+logs/
+.terraform*
