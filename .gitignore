@@ -10,3 +10,6 @@ data/*
 .terraform/
 logs/
 .terraform*
+.terraform*
+*.tfstate
+*.backup
