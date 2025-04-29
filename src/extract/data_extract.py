@@ -1,6 +1,6 @@
-import requests
 import json
-from src.utils.api_utils import encode_url_path
+from src.utils.api_utils import encode_url_path, session, USE_SESSION_POOL
+import requests
 
 def extract_table_data(base_url, category, table_id):
     """Extract data from a table using category and table id"""
@@ -10,7 +10,7 @@ def extract_table_data(base_url, category, table_id):
     
     try:
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-        metadata_response = requests.get(url, headers=headers)
+        metadata_response = session.get(url, headers=headers) if USE_SESSION_POOL else requests.get(url, headers=headers)
         if metadata_response.status_code != 200:
             print(f"Failed to get metadata. Status code: {metadata_response.status_code}")
             return None, None
@@ -34,7 +34,7 @@ def extract_table_data(base_url, category, table_id):
                     }
                 })
                 
-            data_response = requests.post(url, json=query, headers=headers)
+            data_response = session.post(url, json=query, headers=headers) if USE_SESSION_POOL else requests.post(url, json=query, headers=headers)
             print(f"Data response status: {data_response.status_code}")
             
             if data_response.status_code == 200:

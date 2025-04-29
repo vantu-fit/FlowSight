@@ -1,7 +1,13 @@
 import requests
 import urllib.parse
 import json
-import codecs
+from src.config.scraping_settings import USE_SESSION_POOL, MAX_CONNECTIONS, DEFAULT_HEADERS
+
+session = requests.Session()
+session.headers.update(DEFAULT_HEADERS)
+adapter = requests.adapters.HTTPAdapter(pool_connections=MAX_CONNECTIONS, pool_maxsize=MAX_CONNECTIONS)
+session.mount('http://', adapter)
+session.mount('https://', adapter)
 
 def encode_url_path(path):
     """Properly encode URL path components"""
@@ -14,7 +20,7 @@ def inspect_api_response(base_url, path=""):
     url = base_url + encode_url_path(path)
     try:
         print(f"Inspecting URL: {url}")
-        response = requests.get(url)
+        response = session.get(url) if USE_SESSION_POOL else requests.get(url)
         if response.status_code == 200:
             data = response.json()
             print(f"Success! Response contains {len(data)} items")
