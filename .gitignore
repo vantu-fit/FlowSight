@@ -13,3 +13,4 @@ logs/
 .terraform*
 *.tfstate
 *.backup
+.env

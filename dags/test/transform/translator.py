@@ -1,21 +1,27 @@
-# import os
-# import pandas as pd
-# from groq import Groq
-# import json
-# from dotenv import load_dotenv
+import os
+import pandas as pd
+import json
+from dotenv import load_dotenv
+from test.config import JOINED_COLS
 
-# def translate_column_names(df):
-#     """
-#     Translate column names from Vietnamese to English using Groq API with Meta Llama 4 model
-#     Also adds unit annotations to column names based on data samples
+def translate_column_names(columns):
+    """
+    Translate column names from Vietnamese to English using Groq API with Meta Llama 4 model
+    Also adds unit annotations to column names based on data samples
     
-#     Args:
-#         df: DataFrame with Vietnamese column names
-#         api_key: Optional Groq API key (if not provided, will attempt to load from environment)
+    Args:
+        df: DataFrame with Vietnamese column names
+        api_key: Optional Groq API key (if not provided, will attempt to load from environment)
         
-#     Returns:
-#         DataFrame with translated column names
-#     """
+    Returns:
+        DataFrame with translated column names
+    """
+    col_list = columns.tolist()
+    col_list = [item.strip() for item in col_list]  
+    for viet_col, eng_col in JOINED_COLS.items():
+        if viet_col in col_list:
+            col_list[col_list.index(viet_col)] = eng_col
+    return pd.Index(col_list)
 #     if df is None or df.empty:
 #         print("No data to translate")
 #         return df

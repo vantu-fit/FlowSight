@@ -10,7 +10,7 @@ DEFAULT_DAG_ARGS = {
     'email_on_failure': True,
     'email_on_retry': False,
     'retries': 3,
-    'retry_delay': timedelta(minutes=5),
+    'retry_delay': timedelta(minutes=0, seconds=30),
 }
 
 DEFAULT_SCHEDULE_INTERVAL = "@daily"

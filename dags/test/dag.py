@@ -19,6 +19,5 @@ import os
 def my_dag():
     result = extract_caterogy(BASE_URL, CATEGORIES)
     logging.info(f"Extracted categories: {result}")
-    extract_table_data.expand(map_dict=result)
-    join_table(OUTPUT_BASE_PATH, OUTPUT_BASE_PATH)
+    extract_table_data.expand(map_dict=result) >> join_table(OUTPUT_BASE_PATH, OUTPUT_BASE_PATH)
 dag = my_dag()

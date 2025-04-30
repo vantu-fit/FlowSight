@@ -104,20 +104,3 @@ def filter_joined_data(joined_df, min_non_nan_values=2):
     print(f"Removed {len(joined_df) - len(filtered_df)} rows with insufficient data")
     
     return filtered_df
-
-if __name__ == "__main__":
-    # For testing
-    import sys
-    import os.path as path
-    sys.path.append(path.dirname(path.dirname(path.dirname(path.abspath(__file__)))))
-    
-    from src.config.settings import OUTPUT_BASE_PATH
-    
-    # Find the latest data folder
-    data_folders = glob.glob(os.path.join(OUTPUT_BASE_PATH, "gso_data_csv_*"))
-    if data_folders:
-        latest_data_folder = max(data_folders)
-        print(f"Found latest data folder: {latest_data_folder}")
-        preprocess_fdi_data(latest_data_folder)
-    else:
-        print("No data folders found")
