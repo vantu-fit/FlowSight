@@ -5,9 +5,11 @@ import os
 
 from test.utils import encode_url_path, inspect_api_response, convert_data_to_dataframe, save_to_csv
 from test.config import MAX_TABLES_PER_CATEGORY, OUTPUT_BASE_PATH, BASE_URL
+from test.transform.data_joiner import process_province_data
 
 from airflow.decorators import task
 from airflow.exceptions import AirflowException
+from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 
 import pandas as pd
 
@@ -104,8 +106,6 @@ def extract_table_data(base_url=BASE_URL, map_dict=None, ti= None):
         logging.error(f"Error extracting data: {e}")
         raise AirflowException(f"Error extracting data: {e}")
 
-from test.transform.data_joiner import process_province_data
-
 @task
 def join_table(output_dir, data_folder, ti=None):
     """Join all tables in the data directory into a single CSV file"""
@@ -126,7 +126,7 @@ def join_table(output_dir, data_folder, ti=None):
     # Create output folder if it doesn't exist
     joined_data_dir = os.path.join(output_dir, "joined_data")
     os.makedirs(joined_data_dir, exist_ok=True)
-    output_file = os.path.join(joined_data_dir, "joined_data.csv")
+    output_file = os.path.join(joined_data_dir, "final.csv")
     
     # Process and join province data
     input_pattern = os.path.join(data_folder, "*.csv")
@@ -139,3 +139,16 @@ def join_table(output_dir, data_folder, ti=None):
     else:
         logging.info("\n=== Province Data Join Failed ===")
         raise AirflowException("Failed to join province data")
+    
+@task 
+def upload_to_s3(file_path, bucket_name, s3_key, conn_id='aws_default'):
+    """Upload a file to S3"""
+    hook = S3Hook(aws_conn_id=conn_id)
+    hook.load_file(
+        filename=file_path,
+        bucket_name=bucket_name,
+        key=s3_key,
+        replace=True
+    )
+    logging.info(f"Uploaded {file_path} to s3://{bucket_name}/{s3_key}")
+    return f"s3://{bucket_name}/{s3_key}"

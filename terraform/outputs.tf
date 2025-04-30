@@ -5,7 +5,3 @@ output "s3_bucket" {
 output "glue_database" {
   value = module.glue.glue_database_name
 }
-
-output "redshift_endpoint" {
-  value = module.redshift.endpoint
-}

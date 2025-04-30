@@ -81,7 +81,7 @@ resource "aws_glue_crawler" "this" {
   schedule      = var.crawler_schedule
 
   s3_target {
-    path = "s3://${var.s3_bucket}"
+    path = "s3://${var.s3_bucket}/data/"
   }
 
   classifiers = [aws_glue_classifier.csv_classifier.name]

@@ -16,6 +16,7 @@ x-airflow-common:
     AIRFLOW__SMTP__SMTP_PASSWORD: ${AIRFLOW_GMAIL_PASSWORD}
     AIRFLOW__SMTP__SMTP_PORT: 587
     AIRFLOW__SMTP__SMTP_MAIL_FROM: ${AIRFLOW_GMAIL}
+    AIRFLOW_CONN_AWS_DEFAULT: ${AIRFLOW_CONN_AWS_DEFAULT}
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
