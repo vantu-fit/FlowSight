@@ -226,7 +226,7 @@ industry_mapping = {
     "3": "Sản xuất và phân phối điện", "4": "Cung cấp nước, xử lý rác thải, nước thải"
 }
 
-S3_BUCKET = "test-flowsight-bucket"
+S3_BUCKET = "gov-flowsight-bucket"
 S3_KEY = "data/final.csv"
 AWS_CONN_ID = "aws_default"
 OUTPUT_FILE_PATH = "/home/data/joined_data/final.csv"

@@ -5,7 +5,7 @@ venv/
 env/
 .idea/
 .vscode/
-*.env
+# *.env
 data/*
 .terraform/
 logs/
@@ -13,4 +13,4 @@ logs/
 .terraform*
 *.tfstate
 *.backup
-.env
+# .env
