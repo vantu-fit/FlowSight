@@ -4,17 +4,13 @@ import numpy as np
 import glob
 import re
 from src.transform.preprocessors.investment_data_preprocessor import preprocess_fdi_data, filter_joined_data
-from src.transform.preprocessors.population_data_processor import handle_special_tables, split_area_density_data, split_population_by_gender
+from src.transform.preprocessors.population_data_processor import handle_special_tables, preprocess_and_split_data
 from src.config.mappings import (
     PROVINCE_TO_REGION_MAPPING, 
     AGGREGATES_TO_EXCLUDE, 
     PROVINCE_NAME_STANDARDIZATION,
-    JOINED_COLS)
+    )
 from src.transform.translator import translate_column_names
-
-
-def get_province_mapping():
-    return PROVINCE_TO_REGION_MAPPING
 
 
 def load_csv_files(directory_pattern):
@@ -33,7 +29,6 @@ def load_csv_files(directory_pattern):
             data_dict[filename] = df
         except Exception as e:
             print(f"Error loading {file_path}: {e}")
-    
     return data_dict
 
 
@@ -52,7 +47,7 @@ def identify_province_tables(data_dict):
 
 def clean_province_tables(province_tables):
     cleaned_tables = {}
-    province_to_region = get_province_mapping()
+    province_to_region = PROVINCE_TO_REGION_MAPPING
     valid_provinces = set(province_to_region.keys())
     
     for filename, df in province_tables.items():
@@ -64,7 +59,6 @@ def clean_province_tables(province_tables):
             if col in df.columns:
                 province_col = col
                 break
-        
         if province_col is None:
             print(f"No province column found in {filename}, skipping...")
             continue
@@ -231,15 +225,32 @@ def join_province_tables(tables_dict):
 
 def process_province_data(input_directory_pattern, output_file=None):
     print(f"\n=== Processing province data from {input_directory_pattern} ===")
-    
     data_folder = os.path.dirname(input_directory_pattern)
 
     preprocess_fdi_data(data_folder)
-    split_population_by_gender(data_folder)
-
+    preprocess_and_split_data(
+    data_folder="output/gso_data_csv",
+    file_name="Dân số và lao động_Dân số trung bình phân theo địa phương giới tính và thành thị nông thôn.csv",
+    expected_cols=["Tỉnh, thành phố", "Dân số trung bình", "Năm", "value"],
+    category_col="Dân số trung bình",
+    category_mapping={
+        'Nam': 'Số nam giới',
+        'Nữ': 'Số nữ giới',
+        'Thành thị': 'Số dân thành thị',
+        'Nông thôn': 'Số dân nông thôn'
+    })
+    preprocess_and_split_data(
+    data_folder="output/gso_data_csv",
+    file_name="Dân số và lao động_Diện tích dân số và mật độ dân số phân theo địa phương.csv",
+    expected_cols=["Địa phương", "Năm", "Chỉ tiêu", "value"],
+    category_col="Chỉ tiêu",
+    category_mapping={
+        'Diện tích(Km2)': 'Diện tích(Km2)',
+        'Mật độ dân số (Người/km2)': 'Mật độ dân số'
+    })
+    
     data_dict = load_csv_files(input_directory_pattern)
     print(f"Loaded {len(data_dict)} CSV files")
-    
     if not data_dict:
         print("No data to process")
         return None
@@ -251,10 +262,9 @@ def process_province_data(input_directory_pattern, output_file=None):
         return None
 
     cleaned_tables = clean_province_tables(province_tables)
-    special_tables = split_area_density_data(cleaned_tables)
-
-    processed_tables = handle_special_tables(special_tables)
-    renamed_tables = rename_value_columns(processed_tables)
+    # special_tables = split_area_density_data(cleaned_tables)
+    # processed_tables = handle_special_tables(cleaned_tables)
+    renamed_tables = rename_value_columns(cleaned_tables)
     filtered_tables = filter_tables_by_specific_year(renamed_tables)
     if not filtered_tables:
         print("No suitable data found, cannot continue")
@@ -314,10 +324,7 @@ def process_province_data(input_directory_pattern, output_file=None):
         print("No string columns to drop")
     print(f"Final table after dropping string columns has {len(final_df)} rows and {len(final_df.columns)} columns")
     
-    for viet_cols, eng_cols in JOINED_COLS.items():
-        if viet_cols in final_df.columns:
-            final_df.rename(columns={viet_cols: eng_cols}, inplace=True)
-    final_df = translate_column_names(final_df)
+    final_df.columns = translate_column_names(final_df.columns)
 
     if output_file is None:
         output_file = "final_data.csv"
@@ -400,29 +407,3 @@ def filter_tables_by_specific_year(province_tables):
     print(f"After filtering by year, {len(filtered_tables)} tables remain with 2022 data")
     return filtered_tables
 
-
-if __name__ == "__main__":
-    output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "output")
-    latest_data_folder = None
-    
-    data_folders = glob.glob(os.path.join(output_dir, "gso_data_csv_*"))
-    if data_folders:
-        latest_data_folder = max(data_folders)
-    
-    if latest_data_folder:
-        print(f"Found latest data folder: {latest_data_folder}")
-        input_pattern = os.path.join(latest_data_folder, "*.csv")
-        
-        joined_data_dir = os.path.join(output_dir, "final_data")
-        os.makedirs(joined_data_dir, exist_ok=True)
-        
-        output_file = os.path.join(joined_data_dir, "final_data.csv")
-        
-        joined_df = process_province_data(input_pattern, output_file)
-        
-        if joined_df is not None:
-            print(f"Joined data has {len(joined_df)} rows and {len(joined_df.columns)} columns")
-            print("\nSample of joined data:")
-            print(joined_df.head().to_string())
-    else:
-        print("No data folders found in output directory")
