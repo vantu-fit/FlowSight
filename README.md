@@ -4,7 +4,7 @@ This repository contains the infrastructure and workflow definitions for the Flo
 
 ## Data Architecture
 
-![FlowSight Data Architecture](docs/images/data_architecture.png)
+![FlowSight Architecture](https://github.com/user-attachments/assets/32b2517a-4dee-47a4-b234-13d3a9af627c)
 
 ## Prerequisites
 
@@ -20,8 +20,6 @@ This repository contains the infrastructure and workflow definitions for the Flo
    git clone https://github.com/your-username/flowsight-pipeline.git
    cd flowsight-pipeline
    ```
-
-2. Create a `.env` file in the root directory with your AWS and other account settings:
 
 ## Deployment Steps
 
