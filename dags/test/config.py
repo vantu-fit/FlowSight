@@ -11,9 +11,10 @@ CATEGORIES = [
 ]
 
 OUTPUT_BASE_PATH = "/home/data"
-MAX_TABLES_PER_CATEGORY = 15
+MAX_TABLES_PER_CATEGORY = 72
 
 #------- MAPPINGS FOR DATA EXTRACTION -------#
+
 
 province_mapping = {
     "0": "CẢ NƯỚC", "1": "Đồng bằng sông Hồng", "2": "Hà Nội", "3": "Vĩnh Phúc", "4": "Bắc Ninh",
@@ -33,6 +34,159 @@ province_mapping = {
     "60": "Trà Vinh", "61": "Vĩnh Long", "62": "Đồng Tháp", "63": "An Giang",
     "64": "Kiên Giang", "65": "Cần Thơ", "66": "Hậu Giang", "67": "Sóc Trăng",
     "68": "Bạc Liêu", "69": "Cà Mau"
+}
+
+year_mapping = {
+    "0": "2012", "1": "2013", "2": "2014", "3": "2015", "4": "2016", "5": "2017",
+    "6": "2018", "7": "2019", "8": "2020", "9": "2021", "10": "2022",
+    "11": "Sơ bộ 2023", "12": "2023", "13": "Sơ bộ 2024"
+}
+
+industry_mapping = {
+    "0": "TOÀN NGÀNH CÔNG NGHIỆP", "1": "Khai khoáng", "2": "Công nghiệp chế biến, chế tạo",
+    "3": "Sản xuất và phân phối điện", "4": "Cung cấp nước, xử lý rác thải, nước thải"
+}
+
+# Region mapping dictionary (Vietnamese to standardized)
+REGION_MAPPING = {
+    'Đồng bằng sông Hồng': 'Đồng bằng sông Hồng',
+    'Trung du và miền núi phía Bắc': 'Trung du miền núi Bắc Bộ',
+    'Bắc Trung Bộ và Duyên hải miền Trung': 'Bắc Trung Bộ',
+    'Duyên hải Nam Trung Bộ': 'Đồng bằng Duyên Hải miền Trung',
+    'Đông Nam Bộ': 'Đông Nam Bộ',
+    'Tây Nguyên': 'Tây Nguyên',
+    'Đồng bằng sông Cửu Long': 'Đồng bằng sông Cửu Long',
+    # Add alternative spellings or variations
+    'Bắc Trung Bộ': 'Bắc Trung Bộ',
+    'Đồng bằng Duyên Hải miền Trung': 'Đồng bằng Duyên Hải miền Trung',
+    'Trung du miền núi Bắc Bộ': 'Trung du miền núi Bắc Bộ',
+}
+
+# List of aggregated areas to exclude (national average, regional totals)
+AGGREGATES_TO_EXCLUDE = [
+    'CẢ NƯỚC', 'Cả nước', 'Tổng số', 'TOÀN QUỐC', 
+    'Đồng bằng sông Hồng', 'Trung du và miền núi phía Bắc', 
+    'Bắc Trung Bộ và Duyên hải miền Trung', 'Tây Nguyên', 
+    'Đông Nam Bộ', 'Đồng bằng sông Cửu Long',
+    'Trung du miền núi Bắc Bộ', 'Bắc Trung Bộ', 'Đồng bằng Duyên Hải miền Trung'
+]
+
+# Mapping of provinces to regions 
+PROVINCE_TO_REGION_MAPPING = {
+    # Bắc Trung Bộ
+    'Hà Tĩnh': 'Bắc Trung Bộ',
+    'Nghệ An': 'Bắc Trung Bộ',
+    'Quảng Bình': 'Bắc Trung Bộ',
+    'Quảng Trị': 'Bắc Trung Bộ',
+    'Thanh Hóa': 'Bắc Trung Bộ',
+    'Thừa Thiên - Huế': 'Bắc Trung Bộ',
+
+    # Đồng bằng Duyên Hải miền Trung
+    'Bình Định': 'Đồng bằng Duyên Hải miền Trung',
+    'Bình Thuận': 'Đồng bằng Duyên Hải miền Trung',
+    'Đà Nẵng': 'Đồng bằng Duyên Hải miền Trung',
+    'Khánh Hòa': 'Đồng bằng Duyên Hải miền Trung',
+    'Ninh Thuận': 'Đồng bằng Duyên Hải miền Trung',
+    'Phú Yên': 'Đồng bằng Duyên Hải miền Trung',
+    'Quảng Nam': 'Đồng bằng Duyên Hải miền Trung',
+    'Quảng Ngãi': 'Đồng bằng Duyên Hải miền Trung',
+
+    # Đồng bằng sông Cửu Long
+    'An Giang': 'Đồng bằng sông Cửu Long',
+    'Bạc Liêu': 'Đồng bằng sông Cửu Long',
+    'Bến Tre': 'Đồng bằng sông Cửu Long',
+    'Cà Mau': 'Đồng bằng sông Cửu Long',
+    'Cần Thơ': 'Đồng bằng sông Cửu Long',
+    'Đồng Tháp': 'Đồng bằng sông Cửu Long',
+    'Hậu Giang': 'Đồng bằng sông Cửu Long',
+    'Kiên Giang': 'Đồng bằng sông Cửu Long',
+    'Long An': 'Đồng bằng sông Cửu Long',
+    'Sóc Trăng': 'Đồng bằng sông Cửu Long',
+    'Tiền Giang': 'Đồng bằng sông Cửu Long',
+    'Trà Vinh': 'Đồng bằng sông Cửu Long',
+    'Vĩnh Long': 'Đồng bằng sông Cửu Long',
+
+    # Đồng bằng sông Hồng
+    'Bắc Ninh': 'Đồng bằng sông Hồng',
+    'Hà Nam': 'Đồng bằng sông Hồng',
+    'Hà Nội': 'Đồng bằng sông Hồng',
+    'Hải Dương': 'Đồng bằng sông Hồng',
+    'Hải Phòng': 'Đồng bằng sông Hồng',
+    'Hưng Yên': 'Đồng bằng sông Hồng',
+    'Nam Định': 'Đồng bằng sông Hồng',
+    'Ninh Bình': 'Đồng bằng sông Hồng',
+    'Quảng Ninh': 'Đồng bằng sông Hồng',
+    'Thái Bình': 'Đồng bằng sông Hồng',
+    'Vĩnh Phúc': 'Đồng bằng sông Hồng',
+
+    # Đông Nam Bộ
+    'Bà Rịa - Vũng Tàu': 'Đông Nam Bộ',
+    'Bình Dương': 'Đông Nam Bộ',
+    'Bình Phước': 'Đông Nam Bộ',
+    'Đồng Nai': 'Đông Nam Bộ',
+    'Tây Ninh': 'Đông Nam Bộ',
+    'TP. Hồ Chí Minh': 'Đông Nam Bộ',
+
+    # Tây Nguyên
+    'Đắk Lắk': 'Tây Nguyên',
+    'Đắk Nông': 'Tây Nguyên',
+    'Gia Lai': 'Tây Nguyên',
+    'Kon Tum': 'Tây Nguyên',
+    'Lâm Đồng': 'Tây Nguyên',
+
+    # Trung du miền núi Bắc Bộ
+    'Bắc Giang': 'Trung du miền núi Bắc Bộ',
+    'Bắc Kạn': 'Trung du miền núi Bắc Bộ',
+    'Cao Bằng': 'Trung du miền núi Bắc Bộ',
+    'Điện Biên': 'Trung du miền núi Bắc Bộ',
+    'Hà Giang': 'Trung du miền núi Bắc Bộ',
+    'Hòa Bình': 'Trung du miền núi Bắc Bộ',
+    'Lai Châu': 'Trung du miền núi Bắc Bộ',
+    'Lạng Sơn': 'Trung du miền núi Bắc Bộ',
+    'Lào Cai': 'Trung du miền núi Bắc Bộ',
+    'Phú Thọ': 'Trung du miền núi Bắc Bộ',
+    'Sơn La': 'Trung du miền núi Bắc Bộ',
+    'Thái Nguyên': 'Trung du miền núi Bắc Bộ',
+    'Tuyên Quang': 'Trung du miền núi Bắc Bộ',
+    'Yên Bái': 'Trung du miền núi Bắc Bộ'
+}
+
+# Province name standardization to handle variants of the same province
+PROVINCE_NAME_STANDARDIZATION = {
+    'TP.Hồ Chí Minh': 'TP. Hồ Chí Minh',
+    'Tp. Hồ Chí Minh': 'TP. Hồ Chí Minh',
+    'TP Hồ Chí Minh': 'TP. Hồ Chí Minh',
+    'Thành phố Hồ Chí Minh': 'TP. Hồ Chí Minh',
+    'Thừa Thiên Huế': 'Thừa Thiên - Huế',
+    'Thừa Thiên-Huế': 'Thừa Thiên - Huế',
+    'Bà Rịa Vũng Tàu': 'Bà Rịa - Vũng Tàu',
+    'Bà Rịa-Vũng Tàu': 'Bà Rịa - Vũng Tàu',
+    'TP. Đà Nẵng': 'Đà Nẵng',
+    'Tp. Đà Nẵng': 'Đà Nẵng',
+    'TP Đà Nẵng': 'Đà Nẵng',
+    'TP. Hà Nội': 'Hà Nội',
+    'Tp. Hà Nội': 'Hà Nội',
+    'TP Hà Nội': 'Hà Nội',
+    'TP. Hải Phòng': 'Hải Phòng',
+    'Tp. Hải Phòng': 'Hải Phòng',
+    'TP Hải Phòng': 'Hải Phòng',
+    'TP. Cần Thơ': 'Cần Thơ',
+    'Tp. Cần Thơ': 'Cần Thơ', 
+    'TP Cần Thơ': 'Cần Thơ'
+}
+
+JOINED_COLS = {
+  "Giá trị tài sản cố định và đầu tư tài chính dài hạn của các doanh nghiệp đang hoạt động có kết quả sản xuất kinh doanh tại thời điểm 31_12 hàng năm phân theo địa phương": "Fixed Assets Value (VND)",
+  "Số doanh nghiệp đang hoạt động có kết quả sản xuất kinh doanh tại thời điểm 31_12 hàng năm phân theo địa phương": "Operating Enterprises",
+  "Số doanh nghiệp đang hoạt động có kết quả sản xuất kinh doanh tại thời điểm 31_12 phân theo quy mô lao động và theo địa phương": "Enterprises by Labor Size",
+  "Số doanh nghiệp đang hoạt động có kết quả sản xuất kinh doanh tại thời điểm 31_12 phân theo quy mô vốn và theo địa phương": "Enterprises by Capital Size",
+  "Số doanh nghiệp đang hoạt động tại thời điểm 31_12 hàng năm bình quân trên 1000 dân phân theo địa phương": "Enterprises per 1000 People",
+  "Số hợp tác xã đang hoạt động có kết quả sản xuất kinh doanh tại thời điểm 31_12 hàng năm phân theo địa phương": "Active Cooperatives",
+  "Số lao động nữ trong các doanh nghiệp đang hoạt động có kết quả sản xuất kinh doanh tại thời điểm 31_12 hàng năm phân theo địa phương": "Female Labor in Enterprises (people)",
+  "Số lao động trong hợp tác xã đang hoạt động có kết quả sản xuất kinh doanh tại thời điểm 31_12 hàng năm phân theo địa phương": "Cooperative Labor (people)",
+  "Trang bị tài sản cố định bình quân 1 lao động của doanh nghiệp đang hoạt động có kết quả sản xuất kinh doanh phân theo địa phương": "Fixed Assets per Worker (VND)",
+  "Tổng số lao động trong các doanh nghiệp đang hoạt động có kết quả sản xuất kinh doanh tại thời điểm 31_12 hàng năm phân theo địa phương": "Total Enterprise Labor (people)",
+  "Số doanh nghiệp đang hoạt động tại thời điểm 31_12 hàng năm phân theo địa phương": "Active Enterprises"
 }
 
 year_mapping = {

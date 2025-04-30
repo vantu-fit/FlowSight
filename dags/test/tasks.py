@@ -103,4 +103,39 @@ def extract_table_data(base_url=BASE_URL, map_dict=None, ti= None):
     except Exception as e:
         logging.error(f"Error extracting data: {e}")
         raise AirflowException(f"Error extracting data: {e}")
+
+from test.transform.data_joiner import process_province_data
+
+@task
+def join_table(output_dir, data_folder, ti=None):
+    """Join all tables in the data directory into a single CSV file"""
+    if output_dir is None:
+        output_dir = OUTPUT_BASE_PATH
     
+    if data_folder is None:
+        import glob
+        data_folders = glob.glob(os.path.join(output_dir, "gso_data_csv"))
+        if data_folders:
+            data_folder = max(data_folders)
+        else:
+            logging.info("No data folders found in output directory")
+            return None
+    logging.info(f"\n=== Joining Province Data ===")
+    logging.info(f"Source folder: {data_folder}")
+    
+    # Create output folder if it doesn't exist
+    joined_data_dir = os.path.join(output_dir, "joined_data")
+    os.makedirs(joined_data_dir, exist_ok=True)
+    output_file = os.path.join(joined_data_dir, "joined_data.csv")
+    
+    # Process and join province data
+    input_pattern = os.path.join(data_folder, "*.csv")
+    joined_df = process_province_data(input_pattern, output_file)
+    if joined_df is not None:
+        logging.info(f"\n=== Province Data Join Complete ===")
+        logging.info(f"Created joined dataset with {len(joined_df)} rows and {len(joined_df.columns)} columns")
+        logging.info(f"Saved to: {os.path.abspath(output_file)}")
+        joined_df.to_csv(output_file, index=False)
+    else:
+        logging.info("\n=== Province Data Join Failed ===")
+        raise AirflowException("Failed to join province data")
